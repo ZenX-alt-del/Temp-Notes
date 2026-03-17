@@ -1,0 +1,77 @@
+- DML is a subset of SQL commands used to manage and manipulate data stored within the database, rather than defining or altering the structure of the database itself.
+- Any modification made by the DML statement is termed as a transaction.
+- Hence, transaction control using TCL (Transaction Control Language) is required for each transaction (Not necessary, but recommended).
+# Commands Overview
+
+| **Commands** | **Description**                                                                         |
+| ------------ | --------------------------------------------------------------------------------------- |
+| `INSERT`     | Inserts data into a table                                                               |
+| `UPDATE`     | Update existing data within the table                                                   |
+| `DELETE`     | Delete specific records from the database table, primarily based on specific conditions |
+# Insert
+`INSERT` command is used to enter the data into the database tables as rows.
+We can insert data into a table in 2 major ways:
+
+**Manual Data Entry**
+We can manually provide the date that needs to be inserted into the table using the following syntax:
+```sql
+INSERT INTO table_name (column1, column2, ...)
+VALUES
+	(value1, value2, ...),
+	(value1, value2, ...),
+	...;
+```
+- In the above syntax, if there are no column specified against the `table_name`, SQL will expect values for all columns and will fail to execute if the number of values do not match the number of columns in the table.
+
+> [!Note]
+> Columns not included in the `INSERT` statement become `NULL`, unless a default or a constraint exist.
+> **For example,** `INSERT INTO table_name (id, furst_name) VALUES (1, "Andreas");` will insert a new row int he table with specified `id` and `first_name` along with other columns set to `NULL`.
+> Using this technique, we can only skip nullable columns.
+
+**Copying Data From Another Table**
+We can copy the data from another table by combining `INSERT INTO` with `SELECT` statement.
+Using `SELECT`, we need to formulate a result set that matches the target table.
+```sql
+INSERT INTO target_table
+SELECT * FROM source_table;
+```
+
+**For example:**
+```sql
+INSERT INTO persons (id, person_name, birth_date, phone_number)
+SELECT customerid, firstname, NULL, "Unknown"
+FROM customers;
+```
+This will copy the `customerid` and `firstname` from `customers` table into the `persons` table while setting `birth_date` to `NULL` and `phone_number` to `Unknown`. 
+# Update
+This command is used to alter existing table records.
+**Syntax:**
+```sql
+UPDATE table_name
+SET 
+	columnName = value,
+	columnName = value, ...
+WHERE <condition>;
+```
+
+> [!Caution]
+> Always use the `WHERE` clause with `UPDATE` statements to avoid updating the entire table.
+# Delete
+`DELETE` command is used to delete the data from the table.
+**Syntax:**
+```sql
+DELETE FROM table_name
+WHERE <condition>;
+```
+
+> [!Caution]
+> Always use the `WHERE` clause with the `DELETE` statements to avoid deleting the entire data of the table.
+
+**Deleting the entire data of the table**
+To delete the entire data of the table, we can use `DELETE` statement without using any `WHERE` clause.
+```sql
+DELETE FROM table_name;
+```
+- We can achieve the same result using the `TRUNCATE` command. (See [[DDL (Data Definition Language)#Truncate]])
+- When trying to delete the entire data of the table, it is recommended to use the `TRUNCATE` command as it is much faster than the `DELETE` command.
+- `TRUNCATE` will clear the whole table at once without checking or logging.
