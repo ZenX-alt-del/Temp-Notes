@@ -1,0 +1,33 @@
+More on [SQL Functions](https://www.w3schools.com/mysql/mysql_ref_functions.asp)
+
+- Functions in SQL are built-in operations or procedures that take one or more inputs and return a value.
+
+**Types of SQL Functions:** SQL functions can be broadly categorized into 2 types.
+- *Aggregate functions:* They operate on multiple rows and return a single value, often used with `GROUP BY`.
+- *Scalar functions:* They operate on single values and return one result per row. They typically include string, numeric and date functions.
+# Numeric Functions
+
+| **Function** | **Description**                                           |
+| ------------ | --------------------------------------------------------- |
+| `ABS(x)`     | Returns the absolute value of the number                  |
+| `CEILING(x)` | Returns the smallest integer greater than or equal to `x` |
+| `FLOOR(x)`   | Returns the largest integer smaller than or equal to `x`  |
+| `ROUND(x)`   | Rounds the numbers to the nearest integer                 |
+| `MOD(x, y)`  | Returns the remainder when`x` is divided by `y`           |
+# String Functions
+
+| **Function**                     | **Description**                                                  |
+| -------------------------------- | ---------------------------------------------------------------- |
+| `CONCAT(str1, str2, ...)`        | Concatenates two or more strings                                 |
+| `LENGTH(str)`                    | Returns the length of the string                                 |
+| `SUBSTRING(str, pos, len)`       | Returns a substring starting at position `pos` with length `len` |
+| `UPPER(str) / LOWER(str)`        | Converts a string to uppercase or lowercase                      |
+| `REPLACE(str, from_str, to_str)` | Replaces occurrences of `from_str` to `to_str` in `str`          |
+# Aggregate Functions
+
+| **Function**             | **Description**                              |
+| ------------------------ | -------------------------------------------- |
+| `COUNT(*) / COUNT(expr)` | Counts the number of rows or non-null values |
+| `SUM(expr)`              | Sums the values in a column                  |
+| `AVG(expr)`              | Calculates the average value                 |
+| `MIN(expr) / MAX(expr)`  | Finds the minimum or maximum value           |
