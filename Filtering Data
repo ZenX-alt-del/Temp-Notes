@@ -1,0 +1,122 @@
+# Operators
+Operators perform operations on data, such as comparisons, arithmetic, or logical tests.
+
+**Operators Overview:**
+
+| **Type**       | **Example**                                       | **Description**                                     |
+| -------------- | ------------------------------------------------- | --------------------------------------------------- |
+| **Arithmetic** | `+`, `-`, `*`, `/`, `%`                           | Performs mathematical operations                    |
+| **Comparison** | `=`, `!=`, `<`, `>`, `<=`, `>=`                   | Compare values                                      |
+| **Logical**    | `AND`, `OR`, `NOT`                                | Combine conditions by performing logical operations |
+| **Bitwise**    | `&`, `^`, `~`, `<<`, `>>`, `BITWISE OR`           | To perform bitwise operations                       |
+| **Assignment** | `:=`                                              | Assign values                                       |
+| **Other**      | `IN`, `BETWEEN`, `LIKE`, `IS NULL`, `IS NOT NULL` | Special comparisons                                 |
+
+![[SQL_Operators.png | center]]
+## Comparison Operators
+We use comparison operators to compare two expressions. The comparison can be done in the following ways:
+
+**1. Column To Column Comparison**
+`Column1 = Column2`
+*For example:*
+```sql
+firstName = lastName
+```
+
+**2. Column To Value Comparison**
+`Column1 = Value`
+*For example:*
+```sql
+first_name = "John"
+```
+
+**3. Function To Value Comparison**
+`Function = Value`
+*For example:*
+```sql
+UPPER(firstName) = "JOHN"
+```
+
+**4. Expression To Value Comparison**
+`Expression = Value`
+*For example:*
+```sql
+SELECT * FROM products
+WHERE price * quantity = 1000;
+```
+
+**5. Subquery To Value Comparison**
+`Subquery = Value`
+*For example:*
+```sql
+(SELECT AVG(sales) FROM orders) = 1000
+```
+> Note that the above task can also be accomplished by directly using the function `AVG(sales)` and comparing the value, which would be much faster.
+## Logical Operators
+### AND
+Typical logical `AND` operator where the result is only true if both operands are true.
+**Example usage:**
+```sql
+SELECT * 
+FROM customers
+WHERE country = "USA" AND score >= 500;
+```
+### OR
+Typical logical `OR` operator where the result is true if either one of the operand is true.
+**Example usage:**
+```sql
+SELECT * 
+FROM customers
+WHERE country = "USA" OR score >= 500;
+```
+### NOT
+Typical logical `NOT` operator that inverts the output.
+**Example usage:**
+```sql
+SELECT * 
+FROM customers
+WHERE NOT country = "USA";
+-- We can simply use != operator here for more clarity.
+```
+## Range Operator - `BETWEEN`
+Checks if a value is within the specified range.
+**For example:**
+```sql
+SELECT * 
+FROM customers
+WHERE score BETWEEN 100 AND 500; -- Both values are inclusive.
+-- Instead of BETWEEN we can use 2 condition combined with the logical AND operator
+-- For example, score >= 100 AND score <= 500
+```
+## Membership Operator - `IN` And `NOT IN`
+`IN` - Checks if a value exists in a list.
+`NOT IN` - Inverse of `IN`. Returns true if the value doesn't exist in the list.
+
+**For example,** to fetch a list of customers that live in any of the countries in the list of USA, Germany, Italy, UK, we can write multiple comparison checks with `OR` operator. But that would be repetitive.
+A better solution would be to use the `IN` operator.
+```sql
+SELECT * 
+FROM customers
+WHERE country IN ("USA", "Germany", "Italy", "UK");
+```
+
+> Use `IN` operator instead of `OR` for multiple values in the same column to simplify SQL.
+## Search Operator - `LIKE`
+It searches for a pattern in text.
+
+In SQL, we can search for customized pattern. The patterns must follow the following rules:
+- `%` - Matches everything with no limitation on number of occurrences
+- `_` - a single underscore will match any character with exactly one occurrence
+
+**For example:**
+- `M%` - This will match every string which begins with `M` regardless of the length of the string, meaning any number of characters can follow the initial `M` and it will be a match.
+- `%in` - This will match ever string that ends with an `in`.
+- `%r%` -This will match any string that contains the character `r` in it.
+- `__b%` - This will match every string that has the character `b` at third position. This means exactly 2 characters can precede the character `b` for it to be match.
+
+Now to query the database for users that have `r` at their third position in their first names, we can use:
+```sql
+SELECT *
+FROM customers
+WHERE firstname LIKE '__r%';
+```
