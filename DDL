@@ -1,0 +1,262 @@
+- It consists of commands used to define, modify, and delete the structure of database objects like tables, indexes, views, and sequences.
+
+**How DDL differs from other types of SQL**
+- DDL changes the database structure itself, not the data within the tables.
+- To add, update, or delete the data, DML is used.
+- DDL statements are executed immediately and permanently alter the database schema, including table definitions and constraints like `PRIMARY KEY` and `FOREIGN KEY`.
+
+**DDL Commands Overview:**
+
+| **Command** | **Description**                                                                                    |
+| ----------- | -------------------------------------------------------------------------------------------------- |
+| `CREATE`    | Creates database or its objects (table, index, functions, views, stored procedures, and triggers)  |
+| `ALTER`     | Alter the structure of the database objects                                                        |
+| `DROP`      | Delete the database objects                                                                        |
+| `TRUNCTAE`  | Remove all records from the table, but the schema (structure of the table) remains in the database |
+| `RENAME`    | Renames an object in the databse                                                                   |
+| `COMMENT`   | Adds comments to the database dictionary (not supported in `MySql`)                                |
+# CREATE
+It defines a new table or other database objects.
+**For example:**
+```sql
+CREATE TABLE developers (
+	employee_id INT NOT NULL PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    hire_date DATE
+);
+```
+
+There are multiple ways we can make a column the primary key of the table:
+**By adding the `CONSTRAINT` at the end of the query**
+```sql
+CREATE TABLE persons (
+	id INT NOT NULL,
+    person_name VARCHAR(50) NOT NULL,
+    birth_date DATE,
+    phone VARCHAR(15) NOT NULL,
+    CONSTRAINT pk_persons PRIMARY KEY (id)
+);
+```
+
+**By specifying the `PRIMARY KEY` constraint against the column**
+```sql
+CREATE TABLE persons (
+    id INT NOT NULL PRIMARY KEY,
+    person_name VARCHAR(50) NOT NULL,
+    birth_date DATE,
+    phone VARCHAR(15) NOT NULL
+);
+```
+
+**By specifying `AUTO_INCREMENT` against the primary key column**
+```sql
+CREATE TABLE persons (
+    id INT NOT NULL AUTO_INCREMENT,
+    person_name VARCHAR(50) NOT NULL,
+    birth_date DATE,
+    phone VARCHAR(15) NOT NULL,
+    PRIMARY KEY (id)
+);
+```
+
+**After the table has been created, using `ALTER TABLE` to add the primary key column**
+```sql
+ALTER TABLE persons
+ADD PRIMARY KEY (id);
+```
+## Data Types
+- SQL supports a wide range of data types to define what kind of data each column can hold. 
+- These types can vary slightly across database systems, but the following categories are common to most SQL platforms:
+### Numeric Data Types
+
+| **Data Type**                          | **Description**                         |
+| -------------------------------------- | --------------------------------------- |
+| `int`, `smallint`, `bigint`, `tinyint` | Whole numbers of varying size and range |
+| `float`, `real`                        | Floating point numbers                  |
+| `decimal(p,s)`, `numeric(p,s)`         | Fixed precision and scale numbers       |
+| `money`, `smallmoney`                  | For currency values                     |
+### Character And String Data Types
+
+| **Data Type**                              | **Description**                                  |
+| ------------------------------------------ | ------------------------------------------------ |
+| `char(n)`                                  | Fixed length, non-Unicode                        |
+| `varchar(n)`, `varchar(max)`               | Variable length, non-Unicode                     |
+| `nchar(n)`, `nvarchar(n)`, `nvarchar(max)` | Unicode strings (international characters)       |
+| `text`, `ntext`                            | Large text fields (deprecated on some platforms) |
+### Date And Time Data Types
+
+| **Data Type**           | **Description**                            |
+| ----------------------- | ------------------------------------------ |
+| `date`                  | Stores just the data                       |
+| `time`                  | Stores just the time (without date)        |
+| `datetime`, `datetime2` | Date and time, with varying accuracy       |
+| `smalldatetime`         | Less precise date and time                 |
+| `datetimeoffset`        | Date and time with time zone support       |
+| `timestamp`             | Unique binary numbers for each row version |
+### Binary Data Types
+
+| **Data Type**                    | **Description**                   |
+| -------------------------------- | --------------------------------- |
+| `binary(n)`                      | Fixed-length binary data          |
+| `varbinary(n)`, `varbinary(max)` | Variable-length binary data       |
+| `image`                          | Large binary objects (deprecated) |
+### `Boolean` Data Type
+ 
+| **Data Type** | **Description**                                 |
+| ------------- | ----------------------------------------------- |
+| `bit`         | Holds value 0, 1, or `NULL` for `Boolean` logic |
+### Other Data Types
+
+| **Data Type**           | **Description**                                         |
+| ----------------------- | ------------------------------------------------------- |
+| `uniqueidentifier`      | For storing globally unique identifiers (GUID)          |
+| `xml`                   | XML formatted data                                      |
+| `json`                  | JSON formatted data (supported in modern platforms)     |
+| `sql_variant`           | Can store values of various data types                  |
+| `geography`, `geometry` | Spatial types for GIS data                              |
+| `cursor`, `table`       | For operations inside procedures or advanced processing |
+### Advanced Types (Platform Specific)
+
+| **Data Type**                          | **Description**                                                                       |
+| -------------------------------------- | ------------------------------------------------------------------------------------- |
+| `ARRAY`, `STRUCT`, `RANGE`, `INTERVAL` | Composite, array, or time interval types (found in systems like PostgreSQL, BigQuery) |
+| `BLOB`, `CLOB`                         | Large object types for storing large amounts of binary or character data              |
+## Constraints
+They specify rules for data in the table.
+### NOT NULL
+Ensures that a column cannot contain NULL values. Every row must have a value for this column.
+**For example:**
+```sql
+CREATE TABLE Student (
+	ID INT NOT NULL, 
+	Name VARCHAR(50) NOT NULL
+);
+```
+### UNIQUE
+Ensures all values in a column are distinct across rows. It allows NULLs, but no two non-NULL values can be the same.
+**For example:**
+```sql
+CREATE TABLE Product (
+	Barcode VARCHAR(20) UNIQUE
+);
+```
+### PRIMARY KEY
+A combination of NOT NULL and UNIQUE. Used to uniquely identify each row in a table. Only one per table is allowed.
+**For example:**
+```sql
+CREATE TABLE Orders (
+	order_id INT PRIMARY KEY
+);
+```
+### FOREIGN KEY
+Ensures that the value in a column matches a value from another table, maintaining referential integrity between tables.
+**For example:**
+```sql
+CREATE TABLE Orders (
+	customer_id INT REFERENCES Customers(id)
+);
+```
+### CHECK
+Makes sure data in a column satisfies a specific condition.
+**For example:**
+```sql
+CREATE TABLE Employees (
+	Salaray DECIMAL CHECK (Salaray > 20000)
+);
+```
+### DEFAULT
+Sets a default value for a column if no value is specified when inserting data.
+**For example:**
+```sql
+CREATE TABLE Users (
+	Registered DATE DEFAULT CURRENT_DATE
+);
+```
+### INDEX
+Not technically a constraint, but used to speed up searches on a column.
+**For example:**
+```sql
+CREATE INDEX idx_lastname ON Employees (LastName);
+```
+# ALTER
+Modifies an existing table (add, delete, or change columns).
+## Add Columns
+Adds the specified column to the end of the table.
+**For example:**
+```sql
+ALTER TABLE developers
+ADD `role` VARCHAR(20);
+-- Since role is a keyword in sql, we need to use backticks to escape it.
+```
+## Drop Columns
+Removes the specified column from the table permanently. All data within the columns will be removed as well.
+**For example:**
+```sql
+ALTER TABLE developers
+DROP COLUMN hire_date;
+```
+## Modify Columns
+Changes the definition of an existing column, such as its data type or its size.
+**For example:**
+```sql
+ALTER TABLE developers
+MODIFY COLUMN `role` VARCHAR(50);
+```
+
+- It is primarily used in `MySql` and Oracle database.
+- It changes the definition of an existing column, such as its data type,, length or other attributes.
+- It does not change the column name.
+## ALTER COLUMN
+- It is used in SQL Server and also supported in `PostgreSQL`.
+- It changes the data type, length, nullability, or default of a column.
+- The column name remains the same.
+
+**For example:**
+```sql
+ALTER TABLE developers
+ALTER COLUMN last_name VARCHAR(200) NOT NULL;
+-- This syntax is valid for Microsoft SQL server or PostgreSQL
+```
+## Rename Columns
+Changes the name of the column while preserving its data.
+**For example:**
+```sql
+ALTER TABLE developers
+RENAME COLUMN `role` TO job_role;
+```
+## Add Constraints
+Adds rules for the data in a column (such as `NOT NULL` or `UNIQUE`).
+**For example:**
+```sql
+ALTER TABLE developers
+ADD CONSTRAINT your_constraint_name UNIQUE (first_name);
+```
+> [!Note]
+> While adding constraints, it is recommended to use a constraint name.
+> While `MySQL` allows the direct use of `ADD CONSTRAINT`, some databases may throw a syntax error. Therefore, it is best practice to use a constraint name such as (`unique_first_name`).
+## Drop Constraints
+Removes rules or restrictions from columns.
+**For example:**
+```sql
+ALTER TABLE developers
+DROP CONSTRAINT unique_first_name;
+```
+# DROP
+Removes a table or database object permanently.
+**For example:**
+```sql
+DROP TABLE staff;
+```
+# Truncate
+Removes all records of the table permanently but keeps the structure of the table intact.
+**For example:**
+```sql
+TRUNCATE TABLE developers;
+```
+# Rename
+Changes the name of the database table or object while keeping the data preserved.
+**For example:**
+```sql
+RENAME TABLE developers TO staff;
+```
