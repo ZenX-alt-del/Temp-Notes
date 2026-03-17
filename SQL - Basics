@@ -1,0 +1,191 @@
+# Key Concepts
+## SQL
+- Stands for Structured Query Language.
+- Language used to query the database.
+- It allows you to perform the following tasks:
+	- Create and modify database structures (using **DDL – Data Definition Language**)
+	- Insert, update, delete, and retrieve data (using **DML – Data Manipulation Language**)
+	- Control user access and security (using **DCL – Data Control Language**)
+### Types Of SQL (Languages)
+**1. [[DQL (Data Query Language)]]**
+- It is used to fetch data from the database.
+- The main command is SELECT, which retrieves records based on the query. 
+- The output is returned as a result set (a temporary table) that can be viewed or used in applications.
+
+**2. [[DDL (Data Definition Language)]]**
+- It contains commands that are used to define, alter or delete the database structures (tables, schema and indexes).
+- It contains commands like `CREATE`, `ALTER`, `DROP`, `TRUNCATE`, `COMMENT`, `RENAME`.
+
+**3. [[DML (Data Manipulation Language)]]**
+- It is used to manipulate the data stored in database tables.
+- It can be used to insert new records, update existing ones, or delete unwanted data.
+- The commands include `INSERT`, `UPDATE`, and `DELETE`.
+
+**4. DCL (Data Control Language)**
+- This includes commands like `GRANT` and `REVOKE`.
+- It mainly deals with the rights, permissions and other controls of the database.
+- `GRANT` - Assigns new privileges to a user account, allowing access to specific database objects, actions, or functions.
+- `REVOKE` - Removes previously granted privileges from a user account, taking away their access to certain database objects or actions.
+- *For example,* `GRANT SELECT, UPDATE ON employees TO user_name;`
+
+**5. TCL (Transaction Control Language)**
+- Transactions group a set of tasks into a single execution unit. 
+- Each transaction begins with a specific task and ends when all the tasks in the group are successfully completed. 
+- If any of the tasks fail, transaction fails. Therefore, a transaction has only two results: success or failure.
+- It includes commands like `BEGIN TRANSACTION`, `COMMIT`, `ROLLBACK`, AND `SAVEPOINT`.
+- `BEGIN TRANSACTION` - Starts a new transaction.
+- `COMMIT` - Saves all changes made during the transaction.
+- `ROLLBACK` - Undoes all changes made during the transaction.
+- `SAVEPOINT` - Creates a save point within the current transaction.
+
+![[sql_commands.jpg]]
+## Database Management System (DBMS)
+- A **Database Management System (DBMS)** is **software used to create, store, and manage databases**.
+- It provides tools and interfaces for users or applications to interact with the stored data.
+- Key functions of a DBMS include:
+	- **Data Storage & Retrieval:** Efficiently stores data and executes queries.
+	- **Transaction Management:** Ensures data integrity using the **ACID** properties — Atomicity, Consistency, Isolation, Durability.
+	- **Concurrency Control:** Manages simultaneous access by multiple users.
+	- **Security:** Controls user access and authorizations.
+- Popular examples: MySQL, PostgreSQL, Oracle Database, and Microsoft SQL Server.
+
+> An SQL server is the main server that actually stores the database. It can be a physical computer (on-premise server) or it can be a cloud provider.
+
+**Architecture:**
+![[DBMS_architecture.png]]
+## Database Schema
+- It defines the structure and organization of the data in a database.
+- It outlines how data is logically stored, including the relationships between different tables and other database objects as well as the type of data and their constraints.
+- The schema serves as a blueprint for how data is stored, accessed, and manipulated.
+
+**For example:**
+![[schema.jpg]]
+# Database
+- It is an organized collection of data.
+- Data is stored in tables composed of rows and columns.
+- Relational databases (the most common type) use relationships between tables to prevent data duplication and ensure consistency.
+## ACID Properties
+There are several issues that can arise from simultaneous query execution which need to be taken care of. One such issue is the read anomalies that can occur when multiple database transactions are executed concurrently.
+
+**Dirty Read:**
+- **Definition**: A transaction reads data that has been **modified by another transaction but not yet committed**.
+- **Problem**: If the other transaction rolls back, the data read was never actually "real" — hence, it's "dirty".
+- **Example**:
+    - Transaction A updates a balance from $100 to $200.
+    - Transaction B reads the new $200 balance before A commits.
+    - If A rolls back, B has read incorrect data.
+
+**Non-Repeatable Read:**
+- **Definition**: A transaction reads the **same row twice and gets different data** because another transaction modified (and committed) the data in between the reads.
+- **Problem**: The data changed between reads, even though the reading transaction hasn’t modified it.
+- **Example**:
+    - Transaction A reads a row with balance $100.
+    - Transaction B updates the balance to $150 and commits.
+    - Transaction A reads the same row again and now sees $150.
+    - The value was not repeatable within the same transaction.
+
+**Phantom Read:**
+- **Definition**: A transaction reads a set of rows matching a condition, and later, **another transaction inserts or deletes rows** that match the same condition.
+- **Problem**: The original transaction sees a different result when the query is re-run, even though it hasn't changed anything itself.
+- **Example**:
+    - Transaction A queries: `SELECT * FROM Orders WHERE amount > 100`
+    - Transaction B inserts a new row with `amount = 150` and commits.
+    - Transaction A runs the same query again and sees an extra row — a "phantom" row that wasn’t there before.
+
+The ACID properties are a set of four key principles that ensure the reliability and integrity of database transactions in relational database systems.
+### 1. Atomicity
+- This property ensures that a transaction is treated as a single unit of work. 
+- It either **completes in full** (committed) or **does not happen at all** (rolled back). 
+- There is no in-between state. 
+- If any part of the transaction fails, the entire transaction is rolled back to maintain data consistency.
+### 2. Consistency
+- This ensures that a transaction takes the database from one **valid state to another**. 
+- Before a transaction starts, the database must be in a consistent state, and after the transaction is completed, it must also be in a consistent state. 
+- Any data written to the database must adhere to all predefined rules, such as constraints, cascades, and triggers.
+### 3. Isolation
+- This property ensures that transactions are executed in isolation from each other. 
+- Even if multiple transactions are happening simultaneously, each transaction should execute as if it is the **only one** running, and their intermediate results should not be visible to other transactions. 
+- This prevents issues like dirty reads, non-repeatable reads, and phantom reads.
+### 4. Durability
+- Once a transaction has been committed, it is **permanent** and will survive any subsequent system failures (like power loss or crashes). 
+- The changes made by a transaction are written to non-volatile storage (such as a hard disk) and cannot be lost.
+## Types Of Databases
+![[types_of_database.png | center]]
+### Relational Databases
+- Store data in tables with rows and columns.
+- Use SQL for querying.
+- Ensure ACID compliance for reliable transactions.
+- Best for structured data with clear relationships.
+- Examples: Microsoft SQL Server, Oracle, MySQL, PostgreSQL.
+- Commonly used in enterprise applications, finance, and CRM (Customer Relationship Management).
+### Key-Value Databases
+- Store data as key-value pairs, similar to a dictionary.
+- Highly scalable and fast for simple lookups.
+- Limited flexibility in querying complex data.
+- Used for caching, session management, and high-performance needs.
+### Column-Based (Columnar) Databases
+- Store data by columns rather than rows.
+- Efficient for analytical queries on large datasets.
+- Commonly used in data warehouses and big data analytics.
+- Examples: Google `BigQuery`, Cassandra, HBase.
+### Graph Databases
+- Use graph structures with nodes (entities) and edges (relationships).
+- Designed for complex relationship queries.
+- Use specialized query languages like Gremlin or Cypher.
+- Popular for social networks, recommendation systems, and data analytics.
+- Examples: Neo4j, Amazon Neptune.
+### Document Database
+- A **document database** is a type of **NoSQL database** that stores, retrieves, and manages data as **documents**, typically in **JSON**, **BSON**, or **XML** format. 
+- Each document is a **self-contained record** representing data about an entity, like a user, product, or order, and can have a different structure than others in the same collection.
+# Components Of SQL
+## Comments
+We can write comments in the following ways:
+```sql
+-- This is a single-line comment (using two hyphens)
+
+# This is also a single-line comment (as used in MySQL)
+
+/* 
+   This is a 
+   multi-line comment 
+*/
+```
+## Identifiers
+They are the names we assign to different database objects (Databases, Tables, Columns, Indexes, Aliases, Constraints).
+
+**Rules:**
+- Must start with a **letter** or **underscore**.
+- Can contain letters, digits, and underscores.
+## Aliases
+- They are temporary names assigned to tables or columns for the duration of a query.
+
+**Column alias:**
+```sql
+SELECT column_name AS alias_name 
+FROM table_name;
+```
+
+**Table alias:**
+```sql
+SELECT alias_name.* FROM table_name AS alias_name;
+```
+*Example of a table alias:*
+```sql
+SELECT o.OrderID, o.OrderDate, c.CustomerName
+FROM Customers AS c, Orders AS o
+WHERE c.CustomerID = o.CustomerID;
+```
+Here, `Customers` is referred to as `c` and `Orders` as `o`.
+
+**Notes:**
+- The AS keyword is optional; you can use a space.
+```sql
+SELECT column_name alias_name FROM table_name;
+```
+- If an alias contains spaces or special characters, use quotes or brackets.
+
+```sql
+SELECT ProductName AS "My Great Products" FROM Products;
+```
+
+> Aliases cannot be used in all parts of a query (e.g., not valid in WHERE clauses).
