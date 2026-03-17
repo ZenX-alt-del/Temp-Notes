@@ -1,0 +1,155 @@
+DQL is used to fetch data from the database. The main command is SELECT, which retrieves records based on the query.
+# Commands Overview
+
+| **Commands** | **Description**                                                 |
+| ------------ | --------------------------------------------------------------- |
+| `SELECT`     | Retrieves data from the database                                |
+| `FROM`       | Indicates the table(s) from which to retrieve the data          |
+| `WHERE`      | Filters rows before any grouping or aggregation                 |
+| `GROUP BY`   | Group rows that have the same values in the specified column(s) |
+| `HAVING`     | Filters the result of the `GROUP BY`                            |
+| `DISTINCT`   | Removes duplicate rows from the result set                      |
+| `ORDER BY`   | Sorts the result set by one or more columns                     |
+| `LIMIT`      | specifies the maximum number of rows returned by a query        |
+# SQL Clauses
+## SELECT
+- Retrieves specified columns from a table.
+
+**For example:**
+```sql
+SELECT name, age FROM students;
+```
+## FROM
+- Specifies which table(s) to query.
+
+**For example:**
+```sql
+SELECT * FROM students;
+```
+## WHERE
+- Filters records that meet given conditions.
+
+```sql
+SELECT * FROM students WHERE age > 20;
+```
+
+> [!Note]
+> To check whether a field is null, we can use the following syntax:
+> `SELECT * FROM table_name WHERE field_name IS NULL;`
+## ORDER BY
+- Sorts query results by one or more columns.
+
+```sql
+SELECT name, age FROM students ORDER BY age DESC;
+```
+
+> If no ordering rule is provided, the default (`ASC`) is used.
+### Nested Ordering
+- Nested ordering in SQL refers to sorting data by multiple columns hierarchically using the ORDER BY clause—first by one column, then more finely by other columns within those groups.
+
+**How nested `ORDER BY` works:**
+- When you specify two or more columns in the ORDER BY clause, SQL sorts the results by the first column. 
+- For rows with identical values in that column, it further sorts them by the second column, then the third, and so on. 
+- The sort direction (ASC or DESC) can be set for each column individually.
+
+**For example:**
+```sql
+SELECT * FROM students
+ORDER BY class ASC, age DESC, name ASC;
+```
+## GROUP BY
+- Aggregates rows sharing values in specified columns (often used with aggregate functions).
+
+**For example:**
+```sql
+SELECT class, COUNT(*) FROM students GROUP BY class;
+```
+
+**Note on aggregation:**
+All columns in the SELECT must be aggregated or included in the GROUP BY clause.
+
+*For example,* **The code won't run**
+```SQL
+SELECT country, first_name
+FROM customers
+GROUP BY country;
+```
+The above query will result in an error because the SQL wants only those columns that need to be either aggregated (using a function like `SUM()`) or should be included in the GROUP BY clause.
+We can fix this by including the column `first_name` in the GROUUP BY clause.
+## HAVING
+- Filters aggregated data after GROUP BY, based on a condition.
+
+**For example:**
+```sql
+SELECT class, COUNT(*) as count FROM students GROUP BY class HAVING count > 5;
+```
+
+> If you want to filter the data before the aggregation happens, use the WHERE clause.
+> However, to filter the data after the aggregation, use HAVING clause.
+## DISTINCT
+- Removes duplicate rows from results.
+
+**For example:**
+```sql
+SELECT DISTINCT class FROM students;
+```
+
+> [!Caution]
+> Don't use DISTINCT unless necessary, it can significantly slow down the query.
+## TOP
+- Restricts the number of returned rows.
+- In MySQL, use LIMIT.
+
+**For example:**
+```sql
+-- Microsoft SQL server
+SELECT TOP 5 * FROM students;
+```
+
+> [!Note]
+> The `TOP` keyword is valid only in Microsoft SQL server and `Sybase`.
+> In `mysql`, `LIMIT` is the equivalent of using `TOP`, used to limit the number of rows displayed in the result.
+## Limit And Offset
+- LIMIT controls the number of rows; OFFSET skips rows.
+
+**For example:**
+```sql
+SELECT * FROM students LIMIT 5 OFFSET 10;
+-- This will show 5 rows after skipping the first 10 rows
+```
+# Order Of The Clauses
+**Microsoft SQL Server:**
+```sql
+SELECT DISTINCT TOP 2
+	col1,
+	SUM(col2)
+FROM table1
+WHERE col1 = 10
+GROUP BY col1
+HAVING SUM(col2) > 30
+ORDER BY col1 ASC;
+```
+
+**`MySQL`:**
+```sql
+SELECT DISTINCT
+    col1,
+    SUM(col2)
+FROM table1
+WHERE col1 = 10
+GROUP BY col1
+HAVING SUM(col2) > 30
+ORDER BY col1 ASC
+LIMIT 2;
+```
+# Execution Order
+In the above example, the correct order of execution will be the following (from top to bottom):
+```text
+1. FROM
+2. WHERE
+3. GROUP BY
+4. HAVING
+5. SELECT DISTINCT
+6. ORDER BY
+7. TOP / LIMIT
+```
